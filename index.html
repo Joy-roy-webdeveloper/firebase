@@ -122,7 +122,8 @@ signInWithPopup(auth, new FacebookAuthProvider())
     const credential = FacebookAuthProvider.credentialFromResult(result);
     const accessToken = credential.accessToken;
 
-    location.replace("done.html");
+    //location.replace("done.html");
+    console.log("facebook login done");
 
     // ...
   })
