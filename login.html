@@ -1,0 +1,121 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>firebase project</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+
+  </head>
+<body class='bg-light'>
+    <div class="container ">
+      <center>
+      <div class="bg-light shadow-lg  border p-5">
+        <form action="">
+          <h3 class="text-info text-center">Sign Up Here</h3><br>
+          <span id="okmamu" class="text-success"></span><br>
+            <input type="text" name="fname" id="name" placeholder="your  name" class="text-info w-50 p-2 "><br><br>
+            <input type="text" name="eamil" id="email" placeholder="your email" class="text-info w-50 p-2 "><br><br>
+            <input type="text" name="password" id="password" placeholder=" your password" class="text-info w-50 p-2 "><br><br>
+            <input type="button" name="signup" id="signup" value="sign up" class="btn btn-success w-50 p-2 h1"><br><br><br>
+          
+           <p> if you have already account please <a href="index.html" class="badge badge-primary p-1">&nbsp; login&nbsp; </a> here .</p>
+        
+        </form>
+      </div></center>
+    </div>
+
+
+
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+        import { getDatabase,set,ref } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword,isSignInWithEmailLink, signInWithEmailLink ,sendEmailVerification } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyBnr34l58g2_ideYlERyUe5-Dxcq1tgA2E",
+          authDomain: "login-with-59182.firebaseapp.com",
+          databaseURL: "https://login-with-59182-default-rtdb.firebaseio.com",
+          projectId: "login-with-59182",
+          storageBucket: "login-with-59182.appspot.com",
+          messagingSenderId: "800467651891",
+          appId: "1:800467651891:web:22df9a405c92f631020246"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const database = getDatabase(app);
+
+
+        
+
+
+
+document.getElementById("signup").addEventListener("click",function(){
+ 
+  var name = document.getElementById("name").value;
+  var email = document.getElementById("email").value;
+  var password = document.getElementById("password").value;
+
+
+
+
+  createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+
+    //email verifying
+    sendEmailVerification(auth.currentUser)
+  .then(() => {
+    // Email verification sent!
+    // ...
+    console.log("send")
+  })  .catch((error) => {
+                console.log(error);
+              });;
+
+
+
+
+    set(ref(database, 'users/' + user.uid),{
+          username: name,
+          email: email,
+          password:password,
+        
+      });
+    // ...
+document.getElementById("okmamu").innerHTML='<p> congratulation your sign up is successfully now log in !</p>';
+
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // ..
+    alert(errorMessage)
+  });
+
+
+})
+
+
+
+
+      </script>
+
+
+
+    
+</body>
+</html>

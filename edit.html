@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>edit</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body class="bg-light">
+<div class="container">
+<center>
+    <div class="inline flex mt-5">
+        <img src="user.jpg" alt="" width="200px"><br><br>
+       <button class="btn btn-warning" id="us">username change</button>
+       <button class="btn btn-info" id="em">email change</button>
+       <button class="btn btn-danger" id="pass">password change</button>
+    </div><br>
+
+  <span class="container" id="us1" style="display: none;">
+      <input type="text" name="name" id="name" class="p-2 form-control" style="width: 400px;" placeholder="enter username"><br>
+      <button class="btn btn-success p-2" id="ok1">ok</button>
+  </span>
+<br>
+  <span class="container" id="em1" style="display: none;">
+    <input type="email" name="name" id="emails" class="p-2 form-control" style="width: 400px;" placeholder="enter email"><br>
+    <button class="btn btn-success p-2" id="ok2">ok</button>
+  </span><br>
+
+  <span class="container" id="pass1" style="display: none;">
+    <input type="text" name="name" id="oldpass" class="p-2 form-control" style="width: 400px;" placeholder="enter your old password"><br>
+    <input type="text" name="name" id="newpass" class="p-2 form-control" style="width: 400px;" placeholder="enter your new password"><br>
+    <button class="btn btn-success p-2 " id="ok3">ok</button>
+  </span>
+
+</center>
+</div>
+
+<footer>
+  <div class="container" style="margin-top: 170px;">
+  <div class=" container row text-center">
+    <div class="col"><a href="done.html"><img src="home.png" alt="" width="45px"></a></div>
+    <div class="col"><a href="edit.html"><img src="edit.png" alt="" width="50px"></a></div>
+    <div class="col"><img src="login.png" alt="" width="46px" id="sinout"></div>
+ 
+</div>
+</footer>
+
+<script type="module">
+
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+        import {
+          getDatabase,
+          ref,
+          child,
+          get,
+          update, 
+        } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+        import {
+          getAuth,
+          signInWithEmailAndPassword,
+          onAuthStateChanged,updateEmail,signOut ,sendEmailVerification,updatePassword 
+        } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBnr34l58g2_ideYlERyUe5-Dxcq1tgA2E",
+          authDomain: "login-with-59182.firebaseapp.com",
+          databaseURL: "https://login-with-59182-default-rtdb.firebaseio.com",
+          projectId: "login-with-59182",
+          storageBucket: "login-with-59182.appspot.com",
+          messagingSenderId: "800467651891",
+          appId: "1:800467651891:web:22df9a405c92f631020246",
+        };
+  
+     
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth();
+        const user = auth.currentUser;
+        const dbRef = ref(database);
+
+
+
+
+    //user name update function ///////////////////////////////////////////////////////////////////////////////////////
+
+    document.getElementById("us").addEventListener("click",function(e){
+        
+        document.getElementById("us1").style.display="block";
+
+      });
+
+
+
+ 
+
+    document.getElementById("ok1").addEventListener("click",function(e){
+
+
+
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            const uid = user.uid;
+
+            const uname = document.getElementById("name").value;
+
+
+
+            update(ref(database, "users/" + uid), {
+              username: uname
+
+            })
+              .then(() => {
+                alert('user name update')
+               // location.replace("done.html")
+               //document.getElementById("okmamu").innerHTML='<p>data update successfully ! </p>';
+              })
+              .catch((error) => {
+                alert("something worng");
+              });
+          } else {
+          }
+        });
+
+
+        document.getElementById("us1").style.display="none";
+
+
+    });
+
+    //email update plus verify function/////////////////////////////////////////////////////////////////////////////
+
+    document.getElementById("em").addEventListener("click",function(e){
+        document.getElementById("em1").style.display="block";
+
+
+    });
+
+    document.getElementById("ok2").addEventListener("click",function(e){
+
+ onAuthStateChanged(auth, (user) => {
+  if (user) {
+
+    const uid = user.uid;
+
+     const emails =  document.getElementById("emails").value;
+
+    // console.log(emails)
+//update email
+    updateEmail(auth.currentUser, emails).then(() => {
+     console.log("email updated");
+
+//update email database
+
+
+ //update email verification send
+     sendEmailVerification(auth.currentUser)
+  .then(() => {
+    update(ref(database, "users/" + uid), {
+              email: emails
+
+            })
+  console.log("email verifecation send successfully");
+  });
+    }).catch((error) => {
+     alert(error);
+   });
+
+ 
+
+  } else {
+    signOut(auth).then(() => {
+  // Sign-out successful.
+  location.replace("index.html");
+})
+  }
+});
+
+
+
+
+     document.getElementById("em1").style.display="none";
+  });
+
+
+ 
+
+    /////////password change function///////////////////////////////////////////////////////////////////////////////////////
+
+
+    document.getElementById("pass").addEventListener("click",function(e){
+        document.getElementById("pass1").style.display="block";
+
+
+    });
+
+    document.getElementById("ok3").addEventListener("click",function(e){
+       
+      
+      
+      
+      onAuthStateChanged(auth, (user) => {
+  if (user) {
+    const uid = user.uid;
+
+
+    get(child(dbRef, `users/${uid}`)).then((snapshot) => {
+  if (snapshot.exists()) {
+    //console.log(snapshot.val());
+    const oldpass = document.getElementById("oldpass").value;
+    const newpass = document.getElementById("newpass").value;
+    const x = snapshot.val().password;
+    console.log(oldpass)
+    console.log(newpass)
+    console.log(x)
+
+    if(x==oldpass){
+     // alert("well done")
+
+     updatePassword(user, newpass).then(() => {
+      console.log("password updated");
+
+
+      update(ref(database, "users/" + uid), {
+              password: newpass
+
+            })
+
+
+
+
+
+
+
+
+
+}).catch((error) => {
+alert(error)
+});
+
+
+
+
+
+
+    }else{
+      alert("your password is wrong");
+    }
+ 
+
+
+
+  } else {
+    console.log("No data available");
+  }
+}).catch((error) => {
+  console.error(error);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+  } else {
+    signOut(auth).then(() => {
+  // Sign-out successful.
+  location.replace("index.html");
+}).catch((error) => {
+  // An error happened.
+})
+  }
+});
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      document.getElementById("pass1").style.display="none";
+
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//signout methode
+    document.getElementById("sinout").addEventListener("click",function(e){
+      signOut(auth).then(() => {
+  // Sign-out successful.
+  location.replace("index.html");
+}).catch((error) => {
+  // An error happened.
+});
+    })
+</script>
+
+
+
+
+    
+</body>
+</html>
